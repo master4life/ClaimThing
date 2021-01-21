@@ -1,0 +1,11 @@
+name: ClaimThing
+version: 0.1
+main: de.kiyan.claim.Claim
+description: Claiming plugin
+author: master4life
+api-version: '1.13'
+depend: [WorldGuard, WorldEdit]
+
+commands:
+  claim:
+    description: Claiming
