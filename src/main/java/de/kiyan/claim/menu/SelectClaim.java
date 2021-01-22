@@ -1,6 +1,7 @@
 package de.kiyan.claim.menu;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import de.kiyan.claim.runnable.ParticleEffects;
 import me.mattstudios.mfgui.gui.components.util.ItemBuilder;
 import me.mattstudios.mfgui.gui.guis.Gui;
 import me.mattstudios.mfgui.gui.guis.GuiItem;
@@ -55,6 +56,11 @@ public class SelectClaim
                 .setLore( "§7Organize your flags" )
                 .build(), event -> new FlagManager().openMenu( (Player ) event.getWhoClicked(), region, 0 ));
 
+        GuiItem show = new GuiItem( ItemBuilder.from( Material.ENDER_EYE )
+                .setName( "§eShow me boundrias" )
+                .setLore( "§7Particles will visual your claim edges" )
+                .build(), event -> { new ParticleEffects( (Player) event.getWhoClicked(), region ).run(); ((Player) event.getWhoClicked()).closeInventory(); });
+
         GuiItem back = ItemBuilder.from( Material.PLAYER_HEAD )
                 .setName( "§7Back to claim list" )
                 .setSkullTexture( "ewogICJ0aW1lc3RhbXAiIDogMTYwMDk5NjI1NDg4MiwKICAicHJvZmlsZUlkIiA6ICI2OGY1OWI5YjViMGI0YjA1YTlmMmUxZDE0MDVhYTM0OCIsCiAgInByb2ZpbGVOYW1lIiA6ICJNSEZfQXJyb3dEb3duIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2ZlM2Q3NTVjZWNiYjEzYTM5ZThlOTM1NDgyM2E5YTAyYTAxZGNlMGFjYTY4ZmZkNDJlM2VhOWE5ZDI5ZTJkZjIiCiAgICB9CiAgfQp9" )
@@ -69,10 +75,11 @@ public class SelectClaim
 
         menu.getFiller().fillBottom( ItemBuilder.from( Material.BLACK_STAINED_GLASS_PANE ).setName( "§r" ).asGuiItem() );
 
-        menu.setItem( 1, info );
-        menu.setItem( 3, owners );
-        menu.setItem( 5, members );
-        menu.setItem( 7, flages );
+        menu.setItem( 0, info );
+        menu.setItem( 2, owners );
+        menu.setItem( 4, members );
+        menu.setItem( 6, show );
+        menu.setItem( 8, flages );
         menu.setItem( 9, back );
         menu.setItem( 17, delete );
         menu.open( player );

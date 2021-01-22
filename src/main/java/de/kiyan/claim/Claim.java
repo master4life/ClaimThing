@@ -27,7 +27,7 @@ public class Claim extends JavaPlugin
 
     public static WorldEditPlugin getWorldedit(){
         final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
-        if(plugin instanceof WorldEditPlugin) {
+        if( plugin instanceof WorldEditPlugin) {
             return (WorldEditPlugin) plugin;
         } else {
             return null;

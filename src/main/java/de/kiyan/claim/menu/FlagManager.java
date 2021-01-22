@@ -25,7 +25,22 @@ public class FlagManager {
 
         for( Flag< ? > flag : allFlags ) {
             if( !(flag instanceof StateFlag) ) continue;
-            if( flag.getName().equals( "exit" ) || flag.getName().contains( "enderdragon_" ) ) continue;
+            if( flag.getName().equals( "exit" )
+                    || flag.getName().contains( "enderdragon_" )
+                    || flag.getName().contains( "ast" )
+                    || flag.getName().contains( "build" )
+                    || flag.getName().contains( "godmode" )
+                    || flag.getName().contains( "invincible" )
+                    || flag.getName().contains( "netherportals" )
+                    || flag.getName().contains( "chunk-unload" )
+                    || flag.getName().contains( "worldedit" )
+                    || flag.getName().contains( "item-durability" )
+                    || flag.getName().contains( "exp-drops" )
+                    || flag.getName().contains( "natural-hunger-drain" )
+                    || flag.getName().contains( "fall-damage" )
+                    || flag.getName().contains( "block-place" )
+                    || flag.getName().contains( "block-break" ))
+                        continue;
 
             menu.addItem( ItemBuilder.from( region.getFlag( flag ) == null ? Material.WHITE_STAINED_GLASS_PANE : region.getFlag( flag  ) == StateFlag.State.ALLOW ? Material.GREEN_STAINED_GLASS_PANE : Material.RED_STAINED_GLASS_PANE )
                     .setName( "§e§l" + flag.getName() )
@@ -47,7 +62,6 @@ public class FlagManager {
                         }
 
                         openMenu( (Player) event.getWhoClicked(), region, menu.getCurrentPageNum() );
-
                     } ) );
         }
 

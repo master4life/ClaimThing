@@ -18,7 +18,7 @@ public class ClaimList
 {
     public void openMenu( Player player )
     {
-        PaginatedGui menu = new PaginatedGui( 4, "Lists claims" );
+        PaginatedGui menu = new PaginatedGui( 4, "§5§lLists claims" );
 
         menu.setDefaultClickAction( event -> {
             if( event.getSlot() > 26 ) {
@@ -47,9 +47,11 @@ public class ClaimList
                     member = member.equals( "" ) ? ( "§f" + offPlayer.getName() ) : ( member + " §7| §f" + offPlayer.getName() );
                 }
 
-                menu.addItem( ItemBuilder.from( Bukkit.getOfflinePlayer( UUID.fromString(wholeClaim[1] )).getUniqueId().equals( player.getUniqueId() ) ? Material.GRASS_BLOCK : Material.GRASS_PATH )
-                        .setName( wholeClaim[2] )
+                OfflinePlayer offPlayer = Bukkit.getOfflinePlayer( UUID.fromString(wholeClaim[1] ));
+                menu.addItem( ItemBuilder.from( offPlayer.getUniqueId().equals( player.getUniqueId() ) ? Material.GRASS_BLOCK : Material.GRASS_PATH )
+                        .setName( "§e§lClaim: §3§l" + wholeClaim[2] )
                         .setLore( "§e§lUsed Blocks: §f" + (region.volume() / 256 ),
+                                "§e§lClaim belongs: §f" + offPlayer.getName(),
                                 "§e§lOwners: §f" + owner,
                                 "§e§lMembers: §f" + member )
                         .asGuiItem( event -> new SelectClaim().openMenu( player, region )) );

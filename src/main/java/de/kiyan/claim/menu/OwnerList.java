@@ -6,6 +6,7 @@ import me.mattstudios.mfgui.gui.guis.GuiItem;
 import me.mattstudios.mfgui.gui.guis.PaginatedGui;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -16,8 +17,10 @@ public class OwnerList {
 
         for( UUID uuid : region.getOwners().getUniqueIds() )
         {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer( uuid );
+
             GuiItem added = new GuiItem(
-                    ItemBuilder.from( Material.PLAYER_HEAD ).setSkullOwner( Bukkit.getOfflinePlayer( uuid ) ).build(), event -> {
+                    ItemBuilder.from( Material.PLAYER_HEAD ).setName( "§a§l"+ offlinePlayer.getName() ).setSkullOwner( offlinePlayer ).build(), event -> {
                 if( event.isRightClick() )
                 {
                     Player eventPlayer = (Player) event.getWhoClicked();
@@ -26,6 +29,10 @@ public class OwnerList {
                         eventPlayer.sendMessage( "§cYou cant remove the owner of this claim!" );
                         return;
                     }
+                    OfflinePlayer offPLayer = Bukkit.getOfflinePlayer( uuid );
+                    if( offPLayer.isOnline() )
+                        ((Player) offPLayer).sendMessage( "§cYou was removed as Owner from §e" + eventPlayer.getName() + "§c claim called: §5" + region.getId().split( "_" )[2] );
+
                     region.getOwners().removePlayer( uuid );
                     openMenu( eventPlayer, region );
                 }
@@ -44,7 +51,7 @@ public class OwnerList {
         else
             menu.setItem( 4, 5, ItemBuilder.from( Material.BARRIER ).setName( "§4Return back to main menu" ).setLore( "§cYou must return back", "§cto main menu." ).asGuiItem( event -> new MainMenu().openMenu( ( Player ) event.getWhoClicked() ) ) );
 
-        menu.setItem( 4, 6, ItemBuilder.from( Material.PAPER ).setName( "§eGuide:" ).setLore( "§f§LRIGHT CLICK", "  §5Remove player on the list" ).asGuiItem() );
+        menu.setItem( 4, 6, ItemBuilder.from( Material.PAPER ).setName( "§eGuide:" ).setLore( "§eCAUTION!", "§fThose players which you put here", "§fwill have full control of adding", "§fnew owners, members or changing ur flags,", "§fBut you as §eleader§f cant be thrown out.", "", "§f§LRIGHT CLICK", "-  §5Remove player on the list" ).asGuiItem() );
         menu.setItem( 4, 7, ItemBuilder.from( Material.PLAYER_HEAD ).setName( "§eNext" ).setSkullTexture( "ewogICJ0aW1lc3RhbXAiIDogMTYwMDk5NjI3NjA3OSwKICAicHJvZmlsZUlkIiA6ICI1MGM4NTEwYjVlYTA0ZDYwYmU5YTdkNTQyZDZjZDE1NiIsCiAgInByb2ZpbGVOYW1lIiA6ICJNSEZfQXJyb3dSaWdodCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9kMzRlZjA2Mzg1MzcyMjJiMjBmNDgwNjk0ZGFkYzBmODVmYmUwNzU5ZDU4MWFhN2ZjZGYyZTQzMTM5Mzc3MTU4IgogICAgfQogIH0KfQ==" ).asGuiItem( event -> menu.next() ) );
         menu.open( player );
     }
@@ -55,13 +62,15 @@ public class OwnerList {
 
         for( Player all : Bukkit.getOnlinePlayers() )
         {
-            if( all.equals( player ) ) continue;
-            menu.addItem( ItemBuilder.from( Material.PLAYER_HEAD ).setSkullOwner( all ).asGuiItem( event ->
+            if( all.equals( player ) || all.getUniqueId().equals( UUID.fromString( region.getId().split( "_" )[1] ) ) ) continue;
+            menu.addItem( ItemBuilder.from( Material.PLAYER_HEAD ).setName( "§a§l" + all.getName()  ).setSkullOwner( all ).asGuiItem( event ->
             {
                 if( all.isOnline() )
                 {
                     Player eventPlayer = (Player) event.getWhoClicked();
-                    eventPlayer.sendMessage( "You added " + all.getDisplayName() + " to your claim: " + region.getId().split( "_" )[2] );
+                    String claimName = region.getId().split( "_" )[2];
+                    eventPlayer.sendMessage( "§aYou added §e" + all.getDisplayName() + "§a to your claim: §b" + claimName );
+                    all.sendMessage( "§aYou was added as Owner to " + eventPlayer.getName() + "'s§a claim called: §b" + claimName  );
                     region.getOwners().addPlayer( all.getUniqueId() );
 
                     openMenu( player, region );

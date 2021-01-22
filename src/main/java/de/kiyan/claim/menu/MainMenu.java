@@ -28,6 +28,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static de.kiyan.claim.Claim.getWorldedit;
 
@@ -80,7 +81,7 @@ public class MainMenu {
         /*
               You gets an Wand to select an area
          */
-        GuiItem select = new GuiItem( new ItemBuilder( Material.WOODEN_AXE ).setName( "Get this WE Tool" ).setLore( "", "§7Select an designated area", "§5POS1: " + ( minimum == null ? "§5Not set yet" : minimum.toParserString() ), "§5POS2: " + ( maximum == null ? "§5Not set yet" : maximum.toParserString() ), "" ).build(),
+        GuiItem select = new GuiItem( new ItemBuilder( Material.WOODEN_AXE ).setName( "§5Get this WE Tool" ).setLore( "", "§7Select an designated area", "§5POS1: " + ( minimum == null ? "§5Not set yet" : minimum.toString() ), "§5POS2: " + ( maximum == null ? "§5Not set yet" : maximum.toString() ), "" ).build(),
                 event -> {
                     Player eventPlayer = ( Player ) event.getWhoClicked();
                     boolean bWoodAxe = false;
@@ -144,7 +145,7 @@ public class MainMenu {
                                         return;
                                     }
                                 } else {
-                                    eventPlayer.sendMessage("Claim overlaps with another claim! (" + region.getId().split("_" + eventPlayer.getUniqueId() + "_")[1] + ")");
+                                    eventPlayer.sendMessage( "Claim overlaps with another claim! (" + region.getId().split("_" + player.getUniqueId() + "_")[1] + ")");
                                     return;
                                 }
                             }
@@ -170,24 +171,26 @@ public class MainMenu {
                                 }
                                 region.setPriority(1);
                             }
-                            int regionSize = region.volume() / 256;
+                            int regionSize = (region.volume() / 256);
                             for( ProtectedRegion calc : regionManager.getRegions().values() )
                             {
-                                if(region.getId().contains("claim_" + eventPlayer.getUniqueId().toString()))
+                                if( calc.getId().contains("claim_" + eventPlayer.getUniqueId().toString()) )
                                 {
-                                    regionSize = regionSize + (calc.volume() / 256);
+                                    regionSize += (calc.volume() / 256);
                                 }
                             }
 
+                            // Checks if the zone is smaller than 3x3
                             if( (p2.getX() - p1.getX() >= 3 ) && (p2.getZ() - p1.getZ() >= 3) ) {
+                                // Checks if you exceeded your claim
                                 if( regionSize <= Claim.getBlockLimit() ) {
                                     regionManager.addRegion(region);
                                     region.getOwners().addPlayer( eventPlayer.getUniqueId() );
                                     final Map< Flag<?>, Object> map = Maps.newHashMap();
                                     map.put( Flags.PVP, StateFlag.State.DENY);
                                     map.put( Flags.CREEPER_EXPLOSION, StateFlag.State.DENY);
-                                    map.put( Flags.GREET_MESSAGE, "§aEntering to §b§l" + claimName);
-                                    map.put( Flags.FAREWELL_MESSAGE, "§cLeaving §b§l" + claimName);
+                                    map.put( Flags.GREET_MESSAGE, "§aEntering §c§l" + claimName + "§a owned by §b" + Bukkit.getOfflinePlayer( UUID.fromString(region.getId().split( "_" )[1] ) ).getName() );
+                                    map.put( Flags.FAREWELL_MESSAGE, "§cLeaving §b§l" + claimName  + "§c owned by §b" + Bukkit.getOfflinePlayer( UUID.fromString(region.getId().split( "_" )[1] ) ).getName() );
                                     region.setFlags(map);
                                     eventPlayer.sendMessage("Claim " + region.getId().split("_" + eventPlayer.getUniqueId() + "_")[1] + " created!");
                                     openMenu( eventPlayer );
