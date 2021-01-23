@@ -6,6 +6,7 @@ import me.mattstudios.mfgui.gui.components.util.ItemBuilder;
 import me.mattstudios.mfgui.gui.guis.Gui;
 import me.mattstudios.mfgui.gui.guis.GuiItem;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -16,9 +17,9 @@ public class SelectClaim
 {
     public void openMenu( Player player, ProtectedRegion region )
     {
-        String claimName = region.getId().split( "_" )[2];
+        String[] claimName = region.getId().split( "_" );
 
-        Gui menu = new Gui( 2, "§5Managing " + claimName );
+        Gui menu = new Gui( 2, "§5Managing " + claimName[2] );
 
         String owner = "";
         for( UUID uuid : region.getOwners().getUniqueIds() )
@@ -32,9 +33,11 @@ public class SelectClaim
             OfflinePlayer offPlayer = Bukkit.getOfflinePlayer( uuid );
             member = member.equals( "" ) ? ( "§f" + offPlayer.getName() ) : ( member + " §7| §f" + offPlayer.getName() );
         }
+        owner = ( owner.length() > 70 ) ? owner.substring ( 0 , 70 ).concat( "…" ) : owner;
+        member = ( member.length() > 70 ) ? member.substring ( 0 , 70 ).concat( "…" ) : member;
 
         GuiItem info = new GuiItem( ItemBuilder.from( Material.GRASS_BLOCK )
-                .setName( "§aYour select claim: §7" + claimName )
+                .setName( "§aYour select claim: §7" + claimName[2] )
                 .setLore( "§e§lUsed Blocks: §f" + (region.volume() / 256 ),
                         "§e§lOwners: §f" + owner,
                         "§e§lMembers: §f" + member )
@@ -81,7 +84,8 @@ public class SelectClaim
         menu.setItem( 6, show );
         menu.setItem( 8, flages );
         menu.setItem( 9, back );
-        menu.setItem( 17, delete );
+        if( player.getGameMode() == GameMode.CREATIVE || player.getUniqueId().toString().equalsIgnoreCase( claimName[1] ) )
+            menu.setItem( 17, delete );
         menu.open( player );
     }
 }

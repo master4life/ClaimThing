@@ -9,12 +9,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Claim extends JavaPlugin
 {
     private static Claim instance;
-    private final static int blockLimit = 9000;
 
     @Override
     public void onEnable()
     {
         instance = this;
+        new Config( this ).prepareConfig();
+
         this.getCommand( "claim" ).setExecutor( new ClaimCommand() );
     }
 
@@ -23,7 +24,9 @@ public class Claim extends JavaPlugin
         return instance;
     }
 
-    public static int getBlockLimit() { return blockLimit; }
+    public static int getBlockLimit() {
+        return new Config( Claim.getInstance() ).getBlockSize();
+    }
 
     public static WorldEditPlugin getWorldedit(){
         final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");

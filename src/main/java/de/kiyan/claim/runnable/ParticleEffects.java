@@ -1,6 +1,5 @@
 package de.kiyan.claim.runnable;
 
-import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.kiyan.claim.Claim;
 import org.bukkit.Particle;
@@ -8,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class ParticleEffects extends BukkitRunnable {
-    private final BlockVector3 pos1, pos2;
     private final ProtectedRegion region;
     private final Player player;
     private int timer = 0;
@@ -16,42 +14,64 @@ public class ParticleEffects extends BukkitRunnable {
     public ParticleEffects( Player player, ProtectedRegion region ) {
         this.player = player;
         this.region = region;
-        this.pos1 = region.getMinimumPoint();
-        this.pos2 = region.getMaximumPoint();
-        this.timer = 70;
-
-        this.runTaskTimer( Claim.getInstance(), 5L, 10L );
+        this.timer = 20;
+        this.runTaskTimer( Claim.getInstance(), 5L, 15L );
     }
 
     @Override
     public void run() {
-        int startX = pos1.getBlockX();
-        int startY = pos1.getBlockY();
-        int startZ = pos1.getBlockZ();
-        int endX = pos2.getBlockX();
-        int endY = pos2.getBlockY();
-        int endZ = pos2.getBlockZ();
+        final int minX = region.getMinimumPoint().getX();
+        final int minZ = region.getMinimumPoint().getZ();
+        final int maxX = region.getMaximumPoint().getX();
+        final int maxZ = region.getMaximumPoint().getZ();
+        final int midX = (maxX - minX)/2;
+        final int midZ = (maxZ - minZ)/2;
+        double playerY = player.getLocation().getY();
 
-        for( double x = startX; x <= endX + 1; x++ ) {
-            for( double y = startY; y <= endY + 1; y++ ) {
-                for( double z = startZ; z <= endZ + 1; z++ ) {
-                    boolean edge = false;
-                    if( ( ( int ) x == startX || ( int ) x == endX + 1 ) &&
-                            ( ( int ) y == startY || ( int ) y == endY + 1 ) ) edge = true;
-                    if( ( ( int ) z == startZ || ( int ) z == endZ + 1 ) &&
-                            ( ( int ) y == startY || ( int ) y == endY + 1 ) ) edge = true;
-                    if( ( ( int ) x == startX || ( int ) x == endX + 1 ) &&
-                            ( ( int ) z == startZ || ( int ) z == endZ + 1 ) ) edge = true;
-
-                    if( edge )
-                        player.spawnParticle( Particle.FLAME, x, y, z, 0 );
+        if(midX/6 >0) {
+            int tmp = 0;
+            final int amount = midX/5;
+            for(int i = 0; i< amount; i++) {
+                final int x = minX + midX - tmp;
+                final int x2 = minX + midX + tmp;
+                for( double y = playerY - 10; y <= playerY + 10; y++ ) {
+                    player.spawnParticle( Particle.FLAME, x, y, minZ, 0 );
+                    player.spawnParticle( Particle.FLAME, x, y, maxZ, 0 );
+                    player.spawnParticle( Particle.FLAME, x2, y, minZ, 0 );
+                    player.spawnParticle( Particle.FLAME, x2, y, maxZ, 0 );
                 }
+                tmp+= 5;
             }
         }
+        if(midZ/6 >0) {
+            int tmp = 0;
+            final int amount = midZ/5;
+            for(int i = 0; i< amount; i++) {
+                final int z = minZ + midZ - tmp;
+                final int z2 = minZ + midZ + tmp;
+
+                for( double y = playerY - 10; y <= playerY + 10; y++ ) {
+                    player.spawnParticle( Particle.FLAME, minX, y, z, 0 );
+                    player.spawnParticle( Particle.FLAME, maxX, y, z, 0 );
+                    player.spawnParticle( Particle.FLAME, minX, y, z2, 0 );
+                    player.spawnParticle( Particle.FLAME, maxX, y, z2, 0 );
+                }
+                tmp += 5;
+            }
+        }
+
+        for( double y = playerY - 40; y <= 256; y++ ) {
+            player.spawnParticle( Particle.FLAME, minX, y, minZ, 0 );
+            player.spawnParticle( Particle.FLAME, minX, y, maxZ, 0 );
+            player.spawnParticle( Particle.FLAME, maxX, y, minZ, 0 );
+            player.spawnParticle( Particle.FLAME, maxX, y, maxZ, 0 );
+        }
+
         timer--;
 
-        if( 0 > this.timer ) {
-            System.out.println( "killed" );
+        if( 0 > this.timer )
+        {
+            player.sendMessage( "§5Boundaries have been expired." );
             this.cancel();
         }
     }

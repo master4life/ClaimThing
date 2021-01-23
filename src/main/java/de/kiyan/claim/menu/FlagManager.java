@@ -4,6 +4,8 @@ import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import de.kiyan.claim.Claim;
+import de.kiyan.claim.Config;
 import me.mattstudios.mfgui.gui.components.ScrollType;
 import me.mattstudios.mfgui.gui.components.util.ItemBuilder;
 import me.mattstudios.mfgui.gui.guis.ScrollingGui;
@@ -24,25 +26,19 @@ public class FlagManager {
             allFlags.add( it.next() );
 
         for( Flag< ? > flag : allFlags ) {
-            if( !(flag instanceof StateFlag) ) continue;
-            if( flag.getName().equals( "exit" )
-                    || flag.getName().contains( "enderdragon_" )
-                    || flag.getName().contains( "ast" )
-                    || flag.getName().contains( "build" )
-                    || flag.getName().contains( "godmode" )
-                    || flag.getName().contains( "invincible" )
-                    || flag.getName().contains( "netherportals" )
-                    || flag.getName().contains( "chunk-unload" )
-                    || flag.getName().contains( "worldedit" )
-                    || flag.getName().contains( "item-durability" )
-                    || flag.getName().contains( "exp-drops" )
-                    || flag.getName().contains( "natural-hunger-drain" )
-                    || flag.getName().contains( "fall-damage" )
-                    || flag.getName().contains( "block-place" )
-                    || flag.getName().contains( "block-break" ))
-                        continue;
+            if( !( flag instanceof StateFlag ) ) continue;
 
-            menu.addItem( ItemBuilder.from( region.getFlag( flag ) == null ? Material.WHITE_STAINED_GLASS_PANE : region.getFlag( flag  ) == StateFlag.State.ALLOW ? Material.GREEN_STAINED_GLASS_PANE : Material.RED_STAINED_GLASS_PANE )
+            boolean skip = false;
+            for( String string : new Config( Claim.getInstance() ).getBannedFlags() )
+                if( flag.getName().contains( string ) )
+                {
+                    skip = true;
+                    break;
+                }
+
+            if( skip ) continue;
+
+            menu.addItem( ItemBuilder.from( region.getFlag( flag ) == null ? Material.WHITE_STAINED_GLASS_PANE : region.getFlag( flag ) == StateFlag.State.ALLOW ? Material.GREEN_STAINED_GLASS_PANE : Material.RED_STAINED_GLASS_PANE )
                     .setName( "§e§l" + flag.getName() )
                     .asGuiItem( event ->
                     {
@@ -53,15 +49,13 @@ public class FlagManager {
                             region.getFlags().put( flag, region.getFlag( flag ) == StateFlag.State.ALLOW ? StateFlag.State.DENY : StateFlag.State.ALLOW );
 
                         }
-                        if( event.isRightClick() )
-                        {
-                            if( region.getFlag( flag ) != null )
-                            {
+                        if( event.isRightClick() ) {
+                            if( region.getFlag( flag ) != null ) {
                                 region.getFlags().remove( flag );
                             }
                         }
 
-                        openMenu( (Player) event.getWhoClicked(), region, menu.getCurrentPageNum() );
+                        openMenu( ( Player ) event.getWhoClicked(), region, menu.getCurrentPageNum() );
                     } ) );
         }
 

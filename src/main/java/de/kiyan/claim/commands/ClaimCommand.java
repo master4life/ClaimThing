@@ -5,12 +5,12 @@ import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.Flags;
-import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
-import de.kiyan.claim.Claim;
+import de.kiyan.claim.menu.AdminList;
 import de.kiyan.claim.menu.MainMenu;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -38,11 +38,22 @@ public class ClaimCommand implements CommandExecutor {
             new MainMenu().openMenu( player );
         }
         if( args.length == 1 ) {
+            if( args[ 0 ].equalsIgnoreCase( "admin" ))
+            {
+                if( player.getGameMode() == GameMode.CREATIVE )
+                {
+                    new AdminList().openMenu( player );
+
+                } else {
+                    player.sendMessage( "§cOnly for admins!" );
+                    return true;
+                }
+            }
             if( args[ 0 ].equalsIgnoreCase( "info" ) ) {
                 final RegionContainer regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
                 final ApplicableRegionSet set = regionContainer.createQuery().getApplicableRegions( BukkitAdapter.adapt( player.getLocation() ) );
                 if( set.size() <= 0 ) {
-                    player.sendMessage( "§cThere is no region at your location" );
+                    player.sendMessage( "§cThere is no claim at your location" );
                     return true;
                 }
                 String[] claimName = new String[ 3 ];
@@ -52,7 +63,7 @@ public class ClaimCommand implements CommandExecutor {
                 for( ProtectedRegion region : set ) {
                     if( !region.getId().contains( "claim_" ) )
                     {
-                        player.sendMessage( "§cThere is no region at your location" );
+                        player.sendMessage( "§cThere is no claim at your location" );
                         return true;
                     }
 
@@ -63,13 +74,17 @@ public class ClaimCommand implements CommandExecutor {
                     }
                     for( UUID uuid : region.getMembers().getUniqueIds() ) {
                         OfflinePlayer offPlayer = Bukkit.getOfflinePlayer( uuid );
-                        members = members.equals( "" ) ? ( offPlayer.getName() ) : ( members + " §7| §b" + offPlayer.getName() );
+                        if( members != null ) {
+                            members = members.equals( "" ) ? ( offPlayer.getName() ) : ( members + " §7| §b" + offPlayer.getName() );
+                        }
                     }
+                    owners = ( owners.length() > 70 ) ? owners.substring ( 0 , 70 ).concat( "…" ) : owners;
+                    members = ( members.length() > 70 ) ? members.substring ( 0 , 70 ).concat( "…" ) : members;
                     final Map map = region.getFlags();
                     for( final Flag flag : region.getFlags().keySet() ) {
                         if( flag == Flags.GREET_MESSAGE || flag == Flags.FAREWELL_MESSAGE ) continue;
 
-                        flags += flag.getName() + ": " + map.get( flag ) + " §7| §7";
+                        flags += ( map.get( flag ).toString().contains( "ALLOW" ) ? "§2" : "§4" ) + flag.getName() + " §7| ";
                     }
                 }
 
@@ -81,6 +96,7 @@ public class ClaimCommand implements CommandExecutor {
                 player.sendMessage( " §a§LFlags: §7" + flags );
                 player.sendMessage( "§b----------------------------------" );
 
+                return true;
             }
         }
 
