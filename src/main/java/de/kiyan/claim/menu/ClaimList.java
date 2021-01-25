@@ -29,7 +29,6 @@ public class ClaimList
         final RegionContainer regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
         final RegionManager regionManager = regionContainer.get( BukkitAdapter.adapt(player.getWorld()));
 
-
         for( final ProtectedRegion region : regionManager.getRegions().values() ) {
             String[] wholeClaim = region.getId().split( "_" );
             if( wholeClaim[0].equalsIgnoreCase( "claim" ) && region.getOwners().contains( player.getUniqueId() ))
@@ -47,8 +46,8 @@ public class ClaimList
                     member = member.equals( "" ) ? ( "§f" + offPlayer.getName() ) : ( member + " §7| §f" + offPlayer.getName() );
                 }
 
-                owner = ( owner.length() > 70 ) ? owner.substring ( 0 , 70 ).concat( "…" ) : owner;
-                member = ( member.length() > 70 ) ? member.substring ( 0 , 70 ).concat( "…" ) : member;
+                owner = ( owner.length() > 60 ) ? owner.substring ( 0 , 60 ).concat( " …" ) : owner;
+                member = ( member.length() > 60 ) ? member.substring ( 0 , 60 ).concat( " …" ) : member;
 
                 OfflinePlayer offPlayer = Bukkit.getOfflinePlayer( UUID.fromString(wholeClaim[1] ));
                 menu.addItem( ItemBuilder.from( offPlayer.getUniqueId().equals( player.getUniqueId() ) ? Material.GRASS_BLOCK : Material.GRASS_PATH )

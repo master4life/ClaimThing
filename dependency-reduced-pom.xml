@@ -140,6 +140,13 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.behindbars.core</groupId>
+      <artifactId>behindbars</artifactId>
+      <version>1.0</version>
+      <scope>system</scope>
+      <systemPath>C:/Users/Kiyan/Desktop/MC/second/Maven/GameCore.jar</systemPath>
+    </dependency>
   </dependencies>
   <properties>
     <maven.compiler.source>8</maven.compiler.source>

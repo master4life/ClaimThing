@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 public class DeleteClaim
 {
+    // Confirmation window YES - NO
     public void openMenu( Player player, ProtectedRegion region )
     {
         Gui menu = new Gui( 3, "§4§lARE YOU SURE?" );

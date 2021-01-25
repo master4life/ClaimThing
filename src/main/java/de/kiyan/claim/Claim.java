@@ -17,6 +17,7 @@ public class Claim extends JavaPlugin
         new Config( this ).prepareConfig();
 
         this.getCommand( "claim" ).setExecutor( new ClaimCommand() );
+        this.getCommand( "claim" ).setTabCompleter( new ClaimCommand() );
     }
 
     public static Claim getInstance()

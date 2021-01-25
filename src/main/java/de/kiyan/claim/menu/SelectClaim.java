@@ -1,14 +1,20 @@
 package de.kiyan.claim.menu;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.math.Vector2;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
 import de.kiyan.claim.runnable.ParticleEffects;
+import de.kiyan.claim.util.StringUtils;
 import me.mattstudios.mfgui.gui.components.util.ItemBuilder;
 import me.mattstudios.mfgui.gui.guis.Gui;
 import me.mattstudios.mfgui.gui.guis.GuiItem;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -21,26 +27,12 @@ public class SelectClaim
 
         Gui menu = new Gui( 2, "§5Managing " + claimName[2] );
 
-        String owner = "";
-        for( UUID uuid : region.getOwners().getUniqueIds() )
-        {
-            OfflinePlayer offPlayer = Bukkit.getOfflinePlayer( uuid );
-            owner = owner.equals( "" ) ? ( "§f" + offPlayer.getName() ) : ( owner + " §7| §f" + offPlayer.getName() );
-        }
-        String member = "";
-        for( UUID uuid : region.getMembers().getUniqueIds() )
-        {
-            OfflinePlayer offPlayer = Bukkit.getOfflinePlayer( uuid );
-            member = member.equals( "" ) ? ( "§f" + offPlayer.getName() ) : ( member + " §7| §f" + offPlayer.getName() );
-        }
-        owner = ( owner.length() > 70 ) ? owner.substring ( 0 , 70 ).concat( "…" ) : owner;
-        member = ( member.length() > 70 ) ? member.substring ( 0 , 70 ).concat( "…" ) : member;
 
         GuiItem info = new GuiItem( ItemBuilder.from( Material.GRASS_BLOCK )
                 .setName( "§aYour select claim: §7" + claimName[2] )
                 .setLore( "§e§lUsed Blocks: §f" + (region.volume() / 256 ),
-                        "§e§lOwners: §f" + owner,
-                        "§e§lMembers: §f" + member )
+                        "§e§lOwners: §f" + StringUtils.getOwners( region, 60 ),
+                        "§e§lMembers: §f" + StringUtils.getOwners( region, 60 ) )
                 .build());
 
         GuiItem owners = new GuiItem( ItemBuilder.from( Material.PLAYER_HEAD )
@@ -84,7 +76,48 @@ public class SelectClaim
         menu.setItem( 6, show );
         menu.setItem( 8, flages );
         menu.setItem( 9, back );
-        if( player.getGameMode() == GameMode.CREATIVE || player.getUniqueId().toString().equalsIgnoreCase( claimName[1] ) )
+        com.sk89q.worldedit.util.Location wLoc = region.getFlag( Flags.TELE_LOC );
+        if( wLoc != null ) {
+            Location loc = new Location( player.getWorld(), wLoc.getBlockX(), wLoc.getBlockY(), wLoc.getBlockZ() );
+            GuiItem teleport = new GuiItem( ItemBuilder.from( Material.ENDER_PEARL ).setName( "§2Teleport to region" )
+                    .setLore( "§4You might get stuck!", "", "§f§lRight Click to reset"  ).build(), event ->
+            {
+                Player eventPlayer = (Player) event.getWhoClicked();
+                if( event.isLeftClick() )
+                {
+                    eventPlayer.teleport( loc );
+                    eventPlayer.sendMessage( "§aYou teleported to your Claim: §b" + claimName[2] );
+                }
+                if( event.isRightClick() )
+                {
+                    region.getFlags().remove( Flags.TELE_LOC );
+                    eventPlayer.sendMessage( "§cYou reseted your home");
+                    eventPlayer.closeInventory();
+                }
+            } );
+
+            menu.setItem( 13, teleport );
+        } else {
+            wLoc = BukkitAdapter.adapt( player.getLocation() );
+            com.sk89q.worldedit.util.Location finalWLoc = wLoc;
+            GuiItem teleport = new GuiItem( ItemBuilder.from( Material.ENDER_PEARL ).setName( "§aSet your home selection" )
+                    .setLore( "§7Be sure to be in your claim" ).build(), event -> {
+                Player eventPlayer = (Player) event.getWhoClicked();
+                if( region.contains( BlockVector2.at( eventPlayer.getLocation().getBlockX(), eventPlayer.getLocation().getBlockZ() ) ))
+                {
+                    region.getFlags().put( Flags.TELE_LOC, finalWLoc );
+                    eventPlayer.sendMessage( "§2You set a home to your claim: §b" + claimName[ 2 ]  );
+                    eventPlayer.closeInventory();
+                } else {
+                    eventPlayer.sendMessage( "§cYou must be in your claim to set a home!" );
+
+                }
+            } );
+
+            menu.setItem( 13, teleport );
+        }
+
+        if( player.isOp() || player.getUniqueId().toString().equalsIgnoreCase( claimName[1] ) )
             menu.setItem( 17, delete );
         menu.open( player );
     }

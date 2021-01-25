@@ -54,6 +54,13 @@
             <version>7.3.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.behindbars.core</groupId>
+            <artifactId>behindbars</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>C:/Users/Kiyan/Desktop/MC/second/Maven/GameCore.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>

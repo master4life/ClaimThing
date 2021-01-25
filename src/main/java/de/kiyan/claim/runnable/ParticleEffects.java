@@ -11,6 +11,7 @@ public class ParticleEffects extends BukkitRunnable {
     private final Player player;
     private int timer = 0;
 
+    // Initiate an repeatable task
     public ParticleEffects( Player player, ProtectedRegion region ) {
         this.player = player;
         this.region = region;
@@ -18,6 +19,7 @@ public class ParticleEffects extends BukkitRunnable {
         this.runTaskTimer( Claim.getInstance(), 5L, 15L );
     }
 
+    // Displays the region with particle effects.
     @Override
     public void run() {
         final int minX = region.getMinimumPoint().getX();
