@@ -27,7 +27,6 @@ public class SelectClaim
 
         Gui menu = new Gui( 2, "§5Managing " + claimName[2] );
 
-
         GuiItem info = new GuiItem( ItemBuilder.from( Material.GRASS_BLOCK )
                 .setName( "§aYour select claim: §7" + claimName[2] )
                 .setLore( "§e§lUsed Blocks: §f" + (region.volume() / 256 ),
