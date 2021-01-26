@@ -1,4 +1,12 @@
+# A player which have only those sizes allowed to claim
 block-size: 9000
+# Claim plugin only works on those claims bellow
+worlds:
+  - "world"
+  - "world_nether"
+  - "world_the_end"
+# This list removes flags players shouldnt be able to add to their clain any longer.
+# use /claim update to remove existing flags
 banned-flags:
   - "exit"
   - "enderdragon"

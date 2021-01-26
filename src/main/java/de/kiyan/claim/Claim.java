@@ -25,10 +25,6 @@ public class Claim extends JavaPlugin
         return instance;
     }
 
-    public static int getBlockLimit() {
-        return new Config( Claim.getInstance() ).getBlockSize();
-    }
-
     public static WorldEditPlugin getWorldedit(){
         final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
         if( plugin instanceof WorldEditPlugin) {

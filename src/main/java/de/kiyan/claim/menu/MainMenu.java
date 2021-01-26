@@ -6,9 +6,7 @@ import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.regions.RegionSelector;
-import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.Flags;
@@ -18,7 +16,9 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import de.kiyan.claim.Claim;
+import de.kiyan.claim.Config;
 import de.kiyan.claim.api.AnvilGUI;
+import de.kiyan.claim.util.Utils;
 import me.mattstudios.mfgui.gui.components.GuiType;
 import me.mattstudios.mfgui.gui.components.util.ItemBuilder;
 import me.mattstudios.mfgui.gui.guis.Gui;
@@ -55,7 +55,7 @@ public class MainMenu {
         GuiItem playerHead = new GuiItem(ItemBuilder.from(Material.PLAYER_HEAD)
                 .setSkullOwner(Bukkit.getOfflinePlayer(player.getUniqueId()))
                 .setLore("§aYou got §e§l" + counter + "§a claims so far",
-                        "§aYou used §f§l" + blockSize + "§a blocks from §f§l" + Claim.getBlockLimit() + "§a blocks.")
+                        "§aYou used §f§l" + blockSize + "§a blocks from §f§l" + new Config(Claim.getInstance()).getBlockSize() + "§a blocks.")
                 .build());
 
         final RegionSelector selection = getWorldedit().getSession(player).getRegionSelector(BukkitAdapter.adapt(player.getWorld()));
@@ -149,11 +149,9 @@ public class MainMenu {
                                         }
                                     }
                                 }
-                                Bukkit.dispatchCommand(player, "locate village" );
-
 
                                 String claimName = event.getText();
-                                if (regionManager.getRegion("claim_" + eventPlayer.getUniqueId().toString() + "_" + claimName) == (null)) {
+                                if (!Utils.isClaimed("claim_" + eventPlayer.getUniqueId().toString() + "_" + claimName)) {
                                     final ProtectedRegion region = new ProtectedCuboidRegion("claim_" + eventPlayer.getUniqueId().toString() + "_" + claimName,
                                             BlockVector3.at(p1.getBlockX(), 0, p1.getBlockZ()), BlockVector3.at(p2.getBlockX(), 255, p2.getBlockZ()));
                                     final List<ProtectedRegion> overlapingClaims = region.getIntersectingRegions(regionManager.getRegions().values());
@@ -182,7 +180,7 @@ public class MainMenu {
                                     // Checks if the zone is smaller than 6x6
                                     if ((p2.getX() - p1.getX() >= 5) && (p2.getZ() - p1.getZ() >= 5)) {
                                         // Checks if you exceeded your claim
-                                        if (regionSize <= Claim.getBlockLimit()) {
+                                        if (regionSize <= new Config(Claim.getInstance()).getBlockSize()) {
                                             regionManager.addRegion(region);
                                             region.getOwners().addPlayer(eventPlayer.getUniqueId());
                                             final Map<Flag<?>, Object> map = Maps.newHashMap();
@@ -228,7 +226,7 @@ public class MainMenu {
                         "§7(4)   §eClick at the Grass icon to provide an name",
                         "§7(6)   §eYou're done!",
                         "§7You can use as many claims as you like",
-                        "§7but dont exceed your limit of " + Claim.getBlockLimit() + " blocks",
+                        "§7but dont exceed your limit of " + new Config(Claim.getInstance()).getBlockSize() + " blocks",
                         "§7and a claim has to be minimum §53x3")
                 .asGuiItem();
 

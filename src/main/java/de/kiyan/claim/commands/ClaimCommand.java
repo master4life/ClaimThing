@@ -1,6 +1,5 @@
 package de.kiyan.claim.commands;
 
-import com.google.common.collect.Maps;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
@@ -21,7 +20,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.behindbars.gamecore.core.handlers.PlayerHandler;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -45,6 +44,20 @@ public class ClaimCommand implements CommandExecutor, TabCompleter {
             return true;
         }
         Player player = (Player) sender;
+
+        boolean validWorld = false;
+        for (World world : new Config(Claim.getInstance()).getWorlds())
+            if (player.getWorld().equals(world))
+            {
+                validWorld = true;
+                break;
+            }
+
+        if (!validWorld)
+        {
+            player.sendMessage("§cClaims doesnt work on your current world");
+            return false;
+        }
 
         // Shows the MainMenu
         if (args.length == 0) {
@@ -81,7 +94,6 @@ public class ClaimCommand implements CommandExecutor, TabCompleter {
                     }
 
                     claimName = region.getId().split("_");
-
                     owners = StringUtils.getOwners(region, 0);
                     members = StringUtils.getMembers(region, 0);
                     final Map map = region.getFlags();
@@ -98,7 +110,8 @@ public class ClaimCommand implements CommandExecutor, TabCompleter {
                 player.sendMessage(" §a§LBelongs to: §b" + Bukkit.getOfflinePlayer(UUID.fromString(claimName[1])).getName());
                 player.sendMessage(" §a§LOwners: §b" + owners);
                 player.sendMessage(" §a§LMembers: §b" + members);
-                player.sendMessage(" §a§LFlags: §7" + flags);                if (player.getUniqueId().toString().equals(claimName[1]) || player.isOp()) {
+                player.sendMessage(" §a§LFlags: §7" + flags);
+                if (player.getUniqueId().toString().equals(claimName[1])) {
                     TextComponent message = new TextComponent("§7[§2Manage§7]");
                     message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/claim select " + claimName[2]));
                     message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Manage your claim")));
@@ -141,8 +154,7 @@ public class ClaimCommand implements CommandExecutor, TabCompleter {
             if (args[0].equalsIgnoreCase("select")) {
                 if (args.length > 1) {
                     for (ProtectedRegion region : regionManager.getRegions().values()) {
-                        if (region.getId().contains("claim_" + player.getUniqueId().toString() + "_" +  args[1]))
-                        {
+                        if (region.getId().contains("claim_" + player.getUniqueId().toString() + "_" + args[1])) {
                             new SelectClaim().openMenu(player, region);
                             return true;
                         }
