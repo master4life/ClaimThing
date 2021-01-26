@@ -2,7 +2,9 @@ package de.kiyan.claim;
 
 import org.apache.commons.compress.utils.Lists;
 import org.bukkit.Bukkit;
+import org.bukkit.Statistic;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +21,10 @@ public class Config {
         instance.reloadConfig();
     }
 
-    public int getBlockSize() {
-        return instance.getConfig().getInt("block-size");
+    public int getBlockSize(Player player) {
+        int configSize = instance.getConfig().getInt("block-size");
+        configSize += ((player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20) / 60);
+        return configSize;
     }
 
     public List<String> getBannedFlags() {

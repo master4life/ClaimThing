@@ -2,11 +2,8 @@ package de.kiyan.claim.menu;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector2;
-import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import de.kiyan.claim.Claim;
-import de.kiyan.claim.Config;
 import de.kiyan.claim.runnable.ParticleEffects;
 import de.kiyan.claim.util.StringUtils;
 import de.kiyan.claim.util.Utils;

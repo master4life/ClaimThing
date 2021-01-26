@@ -25,6 +25,7 @@ import me.mattstudios.mfgui.gui.guis.Gui;
 import me.mattstudios.mfgui.gui.guis.GuiItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -55,7 +56,7 @@ public class MainMenu {
         GuiItem playerHead = new GuiItem(ItemBuilder.from(Material.PLAYER_HEAD)
                 .setSkullOwner(Bukkit.getOfflinePlayer(player.getUniqueId()))
                 .setLore("§aYou got §e§l" + counter + "§a claims so far",
-                        "§aYou used §f§l" + blockSize + "§a blocks from §f§l" + new Config(Claim.getInstance()).getBlockSize() + "§a blocks.")
+                        "§aYou used §f§l" + blockSize + "§a blocks from §f§l" + new Config(Claim.getInstance()).getBlockSize(player) + "§a blocks.")
                 .build());
 
         final RegionSelector selection = getWorldedit().getSession(player).getRegionSelector(BukkitAdapter.adapt(player.getWorld()));
@@ -180,7 +181,7 @@ public class MainMenu {
                                     // Checks if the zone is smaller than 6x6
                                     if ((p2.getX() - p1.getX() >= 5) && (p2.getZ() - p1.getZ() >= 5)) {
                                         // Checks if you exceeded your claim
-                                        if (regionSize <= new Config(Claim.getInstance()).getBlockSize()) {
+                                        if (regionSize <= new Config(Claim.getInstance()).getBlockSize(eventPlayer)) {
                                             regionManager.addRegion(region);
                                             region.getOwners().addPlayer(eventPlayer.getUniqueId());
                                             final Map<Flag<?>, Object> map = Maps.newHashMap();
@@ -226,8 +227,10 @@ public class MainMenu {
                         "§7(4)   §eClick at the Grass icon to provide an name",
                         "§7(6)   §eYou're done!",
                         "§7You can use as many claims as you like",
-                        "§7but dont exceed your limit of " + new Config(Claim.getInstance()).getBlockSize() + " blocks",
-                        "§7and a claim has to be minimum §53x3")
+                        "§7but dont exceed your limit of §f" + new Config(Claim.getInstance()).getBlockSize(player) + "§7 blocks",
+                        "§7size, you gains per minute playing on this",
+                        "§7server 1 block extra and a claim has",
+                        "§7to be minimum §56x6.")
                 .asGuiItem();
 
         menu.setDefaultClickAction(event -> event.setCancelled(true));
