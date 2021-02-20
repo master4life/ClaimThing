@@ -82,7 +82,7 @@ public class AdminList {
                         String[] wholeClaim = region.getId().split( "_" );
                         if( wholeClaim[ 0 ].equalsIgnoreCase( "claim" ) ) {
                             OfflinePlayer offPlayer = Bukkit.getOfflinePlayer( UUID.fromString( wholeClaim[ 1 ] ) );
-                            if( Objects.requireNonNull( offPlayer.getName() ).toLowerCase().contains( message.toLowerCase() ) ) {
+                            if( offPlayer.getName().toLowerCase().contains( message.toLowerCase() ) ) {
                                 menu.addItem( ItemBuilder.from( Material.PLAYER_HEAD )
                                         .setSkullOwner( offPlayer )
                                         .setName( "§e§lClaim: §3§l" + wholeClaim[ 2 ] )

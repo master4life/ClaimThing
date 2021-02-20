@@ -35,8 +35,6 @@ public class MemberList {
             menu.addItem( added );
         }
 
-        menu.update();
-
         menu.setDefaultClickAction( event -> event.setCancelled( true ) );
         menu.getFiller().fillBottom( ItemBuilder.from( Material.BLACK_STAINED_GLASS_PANE ).setName( "§7" ).asGuiItem() );
 

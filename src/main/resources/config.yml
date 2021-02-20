@@ -1,6 +1,11 @@
 # A player which have only those sizes allowed to claim
 block-size: 9000
-# Claim plugin only works on those claims bellow
+gap-limit: 2000
+allow-individual-tp: true
+# Permission Nodes
+admin-perm: "claimthing.admin" # Administrator
+donor-perm: "claimthing.donor" # Donor flag
+# Claim plugin only works on those worlds below
 worlds:
   - "world"
   - "world_nether"
@@ -25,3 +30,6 @@ banned-flags:
   - "block-place"
   - "mob-damage"
   - "block-break"
+# Reserved flags for donor or admin
+donor-flags:
+  - fly

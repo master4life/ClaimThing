@@ -4,6 +4,8 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import de.kiyan.claim.Claim;
+import de.kiyan.claim.Config;
 import de.kiyan.claim.runnable.ParticleEffects;
 import de.kiyan.claim.util.StringUtils;
 import de.kiyan.claim.util.Utils;
@@ -71,42 +73,53 @@ public class SelectClaim {
         menu.setItem(6, show);
         menu.setItem(8, flages);
         menu.setItem(9, back);
-        com.sk89q.worldedit.util.Location wLoc = region.getFlag(Flags.TELE_LOC);
-        if (wLoc != null) {
-            Location loc = new Location(Utils.getRegionWorld(region), wLoc.getBlockX(), wLoc.getBlockY(), wLoc.getBlockZ());
-            GuiItem teleport = new GuiItem(ItemBuilder.from(Material.ENDER_PEARL).setName("§2Teleport to region")
-                    .setLore("§4You might get stuck!", "", "§f§lRight Click to reset").build(), event ->
+
+        if (new Config(Claim.getInstance()).getTeleportation())
+        {
+            com.sk89q.worldedit.util.Location wLoc = region.getFlag(Flags.TELE_LOC);
+            if (wLoc != null)
             {
-                Player eventPlayer = (Player) event.getWhoClicked();
-                if (event.isLeftClick()) {
-                    eventPlayer.teleport(loc);
-                    eventPlayer.sendMessage("§aYou teleported to your Claim: §b" + claimName[2]);
-                }
-                if (event.isRightClick()) {
-                    region.getFlags().remove(Flags.TELE_LOC);
-                    eventPlayer.sendMessage("§cYou reseted your home");
-                    eventPlayer.closeInventory();
-                }
-            });
+                Location loc = new Location(Utils.getRegionWorld(region), wLoc.getBlockX(), wLoc.getBlockY(), wLoc.getBlockZ());
+                GuiItem teleport = new GuiItem(ItemBuilder.from(Material.ENDER_PEARL).setName("§2Teleport to region")
+                        .setLore("§4You might get stuck!", "", "§f§lRight Click to reset").build(), event ->
+                {
+                    Player eventPlayer = (Player) event.getWhoClicked();
+                    if (event.isLeftClick())
+                    {
+                        eventPlayer.teleport(loc);
+                        eventPlayer.sendMessage("§aYou teleported to your Claim: §b" + claimName[2]);
+                    }
+                    if (event.isRightClick())
+                    {
+                        region.getFlags().remove(Flags.TELE_LOC);
+                        eventPlayer.sendMessage("§cYou reseted your home");
+                        eventPlayer.closeInventory();
+                    }
+                });
 
-            menu.setItem(13, teleport);
-        } else {
-            wLoc = BukkitAdapter.adapt(player.getLocation());
-            com.sk89q.worldedit.util.Location finalWLoc = wLoc;
-            GuiItem teleport = new GuiItem(ItemBuilder.from(Material.ENDER_PEARL).setName("§aSet your home selection")
-                    .setLore("§7Be sure to be in your claim").build(), event -> {
-                Player eventPlayer = (Player) event.getWhoClicked();
-                if (region.contains(BlockVector2.at(eventPlayer.getLocation().getBlockX(), eventPlayer.getLocation().getBlockZ()))) {
-                    region.getFlags().put(Flags.TELE_LOC, finalWLoc);
-                    eventPlayer.sendMessage("§2You set a home to your claim: §b" + claimName[2]);
-                    eventPlayer.closeInventory();
-                } else {
-                    eventPlayer.sendMessage("§cYou must be in your claim to set a home!");
+                menu.setItem(13, teleport);
+            } else
+            {
+                wLoc = BukkitAdapter.adapt(player.getLocation());
+                com.sk89q.worldedit.util.Location finalWLoc = wLoc;
+                GuiItem teleport = new GuiItem(ItemBuilder.from(Material.ENDER_PEARL).setName("§aSet your home selection")
+                        .setLore("§7Be sure to be in your claim").build(), event ->
+                {
+                    Player eventPlayer = (Player) event.getWhoClicked();
+                    if (region.contains(BlockVector2.at(eventPlayer.getLocation().getBlockX(), eventPlayer.getLocation().getBlockZ())))
+                    {
+                        region.getFlags().put(Flags.TELE_LOC, finalWLoc);
+                        eventPlayer.sendMessage("§2You set a home to your claim: §b" + claimName[2]);
+                        eventPlayer.closeInventory();
+                    } else
+                    {
+                        eventPlayer.sendMessage("§cYou must be in your claim to set a home!");
 
-                }
-            });
+                    }
+                });
 
-            menu.setItem(13, teleport);
+                menu.setItem(13, teleport);
+            }
         }
 
         if (player.isOp() || player.getUniqueId().toString().equalsIgnoreCase(claimName[1]))

@@ -11,7 +11,6 @@ import java.util.HashMap;
 
 public class ParticleEffects extends BukkitRunnable {
     private static HashMap<Player, Integer> activePlayer;
-    ;
     private final ProtectedRegion region;
     private final Player player;
     private int timer = 0;

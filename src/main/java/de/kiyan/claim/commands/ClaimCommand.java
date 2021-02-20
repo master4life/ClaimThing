@@ -66,7 +66,7 @@ public class ClaimCommand implements CommandExecutor, TabCompleter {
         if (args.length > 0) {
             // Opens the administration menu, which lists all claims starting with claim_
             if (args[0].equalsIgnoreCase("admin")) {
-                if (new PlayerHandler(player).getRank() == 10) {
+                if (player.hasPermission(new Config(Claim.getInstance()).getPermissions(0))) {
                     new AdminList().openMenu(player);
 
                 } else {
@@ -97,7 +97,7 @@ public class ClaimCommand implements CommandExecutor, TabCompleter {
                     owners = StringUtils.getOwners(region, 0);
                     members = StringUtils.getMembers(region, 0);
                     final Map map = region.getFlags();
-                    for (final Flag flag : region.getFlags().keySet()) {
+                    for (final Flag<?> flag : region.getFlags().keySet()) {
                         if (flag == Flags.GREET_MESSAGE || flag == Flags.FAREWELL_MESSAGE || flag == Flags.TELE_LOC)
                             continue;
 
@@ -127,7 +127,7 @@ public class ClaimCommand implements CommandExecutor, TabCompleter {
             final RegionManager regionManager = regionContainer.get(BukkitAdapter.adapt(player.getWorld()));
             // Whenever banned-flags was updated this commaond refrehes all claims
             if (args[0].equalsIgnoreCase("update")) {
-                if (new PlayerHandler(player).getRank() == 10) {
+                if (player.hasPermission(new Config(Claim.getInstance()).getPermissions(0))) {
                     int counter = 0;
                     for (ProtectedRegion region : regionManager.getRegions().values()) {
                         if (!region.getId().contains("claim_")) continue;
@@ -182,7 +182,7 @@ public class ClaimCommand implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             commands.add("info");
             commands.add("select");
-            if (player.isOp()) {
+            if (player.isOp() || player.hasPermission(new Config(Claim.getInstance()).getPermissions(0))) {
                 commands.add("admin");
                 commands.add("update");
             }
