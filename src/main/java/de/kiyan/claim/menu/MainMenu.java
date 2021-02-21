@@ -221,7 +221,7 @@ public class MainMenu
                                     }
 
                                     // Checks if the zone is smaller than 6x6
-                                    if ((p2.getX() - p1.getX() >= 5) && (p2.getZ() - p1.getZ() >= 5))
+                                    if ((p2.getX() - p1.getX() >= 6) && (p2.getZ() - p1.getZ() >= 6))
                                     {
                                         // Checks if you exceeded your claim
                                         if (regionSize <= new Config(Claim.getInstance()).getBlockSize(eventPlayer))
@@ -243,7 +243,7 @@ public class MainMenu
                                         }
                                     } else
                                     {
-                                        eventPlayer.sendMessage("Claim not big enough! Claims must be atleast 6x6 wide.");
+                                        eventPlayer.sendMessage("Claim not big enough! Claims must be at least 6x6 wide.");
                                         eventPlayer.closeInventory();
                                     }
                                 } else

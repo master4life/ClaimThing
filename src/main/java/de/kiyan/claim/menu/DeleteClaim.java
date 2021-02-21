@@ -14,34 +14,36 @@ import org.bukkit.entity.Player;
 public class DeleteClaim
 {
     // Confirmation window YES - NO
-    public void openMenu( Player player, ProtectedRegion region )
+    public void openMenu(Player player, ProtectedRegion region)
     {
-        Gui menu = new Gui( 3, "§4§lARE YOU SURE?" );
+        Gui menu = new Gui(3, "§4§lARE YOU SURE?");
 
-        GuiItem delete = new GuiItem( ItemBuilder.from( Material.RED_CONCRETE ).setName( "§4Delete!" ).setLore( "§4This cant be undone!" ).build(), event -> {
+        GuiItem delete = new GuiItem(ItemBuilder.from(Material.RED_CONCRETE).setName("§4Delete!").setLore("§4This cant be undone!").build(), event ->
+        {
             final RegionContainer regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
-            final RegionManager regionManager = regionContainer.get( BukkitAdapter.adapt( player.getWorld() ) );
+            final RegionManager regionManager = regionContainer.get(BukkitAdapter.adapt(player.getWorld()));
             Player eventPlayer = (Player) event.getWhoClicked();
 
-            if( region != null && regionManager != null )
+            if (region != null && regionManager != null)
             {
-                eventPlayer.sendMessage( "You have successfully removed the claim: " + region.getId().split( "_" )[2] );
+                eventPlayer.sendMessage("You have successfully removed the claim: " + region.getId().split("_")[2]);
 
-                regionManager.removeRegion( region.getId() );
+                regionManager.removeRegion(region.getId());
             }
 
-            new MainMenu().openMenu( eventPlayer );
-        } );
+            new MainMenu().openMenu(eventPlayer);
+        });
 
-        GuiItem back = new GuiItem( ItemBuilder.from( Material.GREEN_CONCRETE ).setName( "§aBack!" ).setLore( "§eAlmost!" ).build(), event -> {
-            new SelectClaim().openMenu( player, region );
-        } );
+        GuiItem back = new GuiItem(ItemBuilder.from(Material.GREEN_CONCRETE).setName("§aBack!").setLore("§eAlmost!").build(), event ->
+        {
+            new SelectClaim().openMenu(player, region);
+        });
 
-        menu.getFiller().fillBorder( ItemBuilder.from( Material.GRAY_STAINED_GLASS_PANE ).setName( "§7" ).asGuiItem() );
+        menu.getFiller().fillBorder(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).setName("§7").asGuiItem());
 
-        menu.setDefaultClickAction( event -> event.setCancelled( true ) );
-        menu.setItem( 11, delete );
-        menu.setItem( 15, back );
-        menu.open( player );
+        menu.setDefaultClickAction(event -> event.setCancelled(true));
+        menu.setItem(11, delete);
+        menu.setItem(15, back);
+        menu.open(player);
     }
 }

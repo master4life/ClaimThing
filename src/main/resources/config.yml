@@ -1,6 +1,6 @@
 # A player which have only those sizes allowed to claim
 block-size: 9000
-gap-limit: 2000
+gap-limit: 10
 allow-individual-tp: true
 # Permission Nodes
 admin-perm: "claimthing.admin" # Administrator

@@ -9,14 +9,16 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 
-public class ParticleEffects extends BukkitRunnable {
+public class ParticleEffects extends BukkitRunnable
+{
     private static HashMap<Player, Integer> activePlayer;
     private final ProtectedRegion region;
     private final Player player;
     private int timer = 0;
 
     // Initiate an repeatable task
-    public ParticleEffects(Player player, ProtectedRegion region) {
+    public ParticleEffects(Player player, ProtectedRegion region)
+    {
         this.player = player;
         this.region = region;
         this.timer = 20;
@@ -24,7 +26,8 @@ public class ParticleEffects extends BukkitRunnable {
         if (activePlayer == null)
             activePlayer = new HashMap<>();
 
-        if (activePlayer.containsKey(player)) {
+        if (activePlayer.containsKey(player))
+        {
             Bukkit.getScheduler().cancelTask(activePlayer.get(player));
             activePlayer.remove(player);
         }
@@ -36,7 +39,8 @@ public class ParticleEffects extends BukkitRunnable {
 
     // Displays the region with particle effects.
     @Override
-    public void run() {
+    public void run()
+    {
         final int minX = region.getMinimumPoint().getX();
         final int minZ = region.getMinimumPoint().getZ();
         final int maxX = region.getMaximumPoint().getX();
@@ -45,13 +49,16 @@ public class ParticleEffects extends BukkitRunnable {
         final int midZ = (maxZ - minZ) / 2;
         double playerY = player.getLocation().getY();
 
-        if (midX / 6 > 0) {
+        if (midX / 6 > 0)
+        {
             int tmp = 0;
             final int amount = midX / 5;
-            for (int i = 0; i < amount; i++) {
+            for (int i = 0; i < amount; i++)
+            {
                 final int x = minX + midX - tmp;
                 final int x2 = minX + midX + tmp;
-                for (double y = playerY - 10; y <= playerY + 10; y++) {
+                for (double y = playerY - 10; y <= playerY + 10; y++)
+                {
                     player.spawnParticle(Particle.FLAME, x, y, minZ, 0);
                     player.spawnParticle(Particle.FLAME, x, y, maxZ, 0);
                     player.spawnParticle(Particle.FLAME, x2, y, minZ, 0);
@@ -60,14 +67,17 @@ public class ParticleEffects extends BukkitRunnable {
                 tmp += 5;
             }
         }
-        if (midZ / 6 > 0) {
+        if (midZ / 6 > 0)
+        {
             int tmp = 0;
             final int amount = midZ / 5;
-            for (int i = 0; i < amount; i++) {
+            for (int i = 0; i < amount; i++)
+            {
                 final int z = minZ + midZ - tmp;
                 final int z2 = minZ + midZ + tmp;
 
-                for (double y = playerY - 10; y <= playerY + 10; y++) {
+                for (double y = playerY - 10; y <= playerY + 10; y++)
+                {
                     player.spawnParticle(Particle.FLAME, minX, y, z, 0);
                     player.spawnParticle(Particle.FLAME, maxX, y, z, 0);
                     player.spawnParticle(Particle.FLAME, minX, y, z2, 0);
@@ -77,7 +87,8 @@ public class ParticleEffects extends BukkitRunnable {
             }
         }
 
-        for (double y = playerY - 40; y <= 256; y++) {
+        for (double y = playerY - 40; y <= 256; y++)
+        {
             player.spawnParticle(Particle.FLAME, minX, y, minZ, 0);
             player.spawnParticle(Particle.FLAME, minX, y, maxZ, 0);
             player.spawnParticle(Particle.FLAME, maxX, y, minZ, 0);
@@ -85,7 +96,8 @@ public class ParticleEffects extends BukkitRunnable {
         }
         timer--;
 
-        if (0 > this.timer) {
+        if (0 > this.timer)
+        {
             player.sendMessage("§5Boundaries have been expired.");
             this.cancel();
         }

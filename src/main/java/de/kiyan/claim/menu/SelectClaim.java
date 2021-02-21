@@ -7,6 +7,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.kiyan.claim.Claim;
 import de.kiyan.claim.Config;
 import de.kiyan.claim.runnable.ParticleEffects;
+import de.kiyan.claim.util.SkullType;
 import de.kiyan.claim.util.StringUtils;
 import de.kiyan.claim.util.Utils;
 import me.mattstudios.mfgui.gui.components.util.ItemBuilder;
@@ -55,13 +56,18 @@ public class SelectClaim {
 
         GuiItem back = ItemBuilder.from(Material.PLAYER_HEAD)
                 .setName("§7Back to claim list")
-                .setSkullTexture("ewogICJ0aW1lc3RhbXAiIDogMTYwMDk5NjI1NDg4MiwKICAicHJvZmlsZUlkIiA6ICI2OGY1OWI5YjViMGI0YjA1YTlmMmUxZDE0MDVhYTM0OCIsCiAgInByb2ZpbGVOYW1lIiA6ICJNSEZfQXJyb3dEb3duIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2ZlM2Q3NTVjZWNiYjEzYTM5ZThlOTM1NDgyM2E5YTAyYTAxZGNlMGFjYTY4ZmZkNDJlM2VhOWE5ZDI5ZTJkZjIiCiAgICB9CiAgfQp9")
+                .setSkullTexture(SkullType.LEFT.getTexture())
                 .asGuiItem(event -> new ClaimList().openMenu((Player) event.getWhoClicked()));
 
         GuiItem delete = new GuiItem(ItemBuilder.from(Material.BARRIER)
                 .setName("§eRemove this claim")
                 .setLore("§4§lCAUTION!", "§cThis cant be undone!")
                 .build(), event -> new DeleteClaim().openMenu((Player) event.getWhoClicked(), region));
+
+        GuiItem expand = new GuiItem(ItemBuilder.from(Material.COMPASS)
+                .setName("§eExpand")
+                .setLore("§aIncrease your claim sizes.")
+                .build(), event -> new ExpandMenu().openMenu((Player) event.getWhoClicked(), region));
 
         menu.setDefaultClickAction(event -> event.setCancelled(true));
 
@@ -72,6 +78,7 @@ public class SelectClaim {
         menu.setItem(4, members);
         menu.setItem(6, show);
         menu.setItem(8, flages);
+        menu.setItem(11, expand);
         menu.setItem(9, back);
 
         if (new Config(Claim.getInstance()).getTeleportation())
